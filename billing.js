@@ -19,19 +19,6 @@ function add_ltv(json){
     add_lastBillDate(json);
 }
 
-function add_grossTotal(json) {
-    for(var i=0; i<json.bills.length; i++){
-        var grossTotal = 0;
-        for(var j=0; j<json.bills[i].products.length; j++){
-            var currProd = json.bills[i].products[j];
-            grossTotal+=(currProd.price * currProd.quantity) + currProd.taxAmt;
-        }
-        json.bills[i].grossTotal = grossTotal;
-    }
-
-    add_ltv(json);
-}
-
 
 function add_payableAmt(json){
     for(var i=0; i<json.bills.length; i++) {
@@ -42,8 +29,23 @@ function add_payableAmt(json){
         json.bills[i].payableAmt=payableAmt;
     }
 
-    add_grossTotal(json);
+    add_ltv(json);
 }
+
+function add_grossTotal(json) {
+    for(var i=0; i<json.bills.length; i++){
+        var grossTotal = 0;
+        for(var j=0; j<json.bills[i].products.length; j++){
+            var currProd = json.bills[i].products[j];
+            grossTotal+=(currProd.price * currProd.quantity) + currProd.taxAmt;
+        }
+        json.bills[i].grossTotal = grossTotal;
+    }
+    
+    add_payableAmt(json);
+}
+
+
 
 function is_bought_for_birthday(json){
     for (let i = 0; i < json.bills.length; i++) {
@@ -60,7 +62,7 @@ function is_bought_for_birthday(json){
         }
     }
 
-    add_payableAmt(json);
+    add_grossTotal(json);
 }
 
 
@@ -99,7 +101,7 @@ add_age(json);
 
 console.log(json);
 
-fs.writeFile('billing/updated_bill.json', JSON.stringify(json), (err) => {
+fs.writeFile('updated_bill.json', JSON.stringify(json), (err) => {
   if (err) {
     console.error(err);
     return;
