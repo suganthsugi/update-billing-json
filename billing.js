@@ -28,6 +28,7 @@ const add_lastBillDate = (json) => {
     return json;
 }
 
+
 function add_ltv(json){
     const ltv = json[json_keys.BILLS].reduce((acc, ele) => ele[json_keys.payableAmt]+acc, 0);
     json[json_keys.ltv] = ltv;
