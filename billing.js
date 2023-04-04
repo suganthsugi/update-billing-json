@@ -19,18 +19,18 @@ const json_keys = {
 const get_recent_billDate = (recent, curr) => {
     const recentDate = new Date(recent);
     const currDate = new Date(curr);
-    return recentDate>currDate?recentDate:currDate;
+    return recentDate > currDate ? recentDate : currDate;
 }
 
 const add_lastBillDate = (json) => {
     var lastBillDate = json[json_keys.BILLS].reduce((acc, ele) => get_recent_billDate(acc, ele[json_keys.DATE]), 0);
-    json.lastBillDate=lastBillDate;
+    json.lastBillDate = lastBillDate;
     return json;
 }
 
 
-function add_ltv(json){
-    const ltv = json[json_keys.BILLS].reduce((acc, ele) => ele[json_keys.payableAmt]+acc, 0);
+function add_ltv(json) {
+    const ltv = json[json_keys.BILLS].reduce((acc, ele) => ele[json_keys.payableAmt] + acc, 0);
     json[json_keys.ltv] = ltv;
     return json;
 }
@@ -39,7 +39,7 @@ const add_payableAmt = (json) => {
     const all_bills = json[json_keys.BILLS];
     all_bills.map((x) => {
         const currProd = x[json_keys.PRODUCTS];
-        const payableAmt = currProd.reduce((acc, ele) => acc+ele[json_keys.paidAmt], 0);
+        const payableAmt = currProd.reduce((acc, ele) => acc + ele[json_keys.paidAmt], 0);
         x[json_keys.payableAmt] = payableAmt;
     })
     return json;
@@ -50,7 +50,7 @@ const find_grossTot = (ele) => {
     const price = ele[json_keys.PRICE];
     const quantity = ele[json_keys.QUANTITY];
     const taxAmt = ele[json_keys.taxAmt];
-    const grossTotal = (price*quantity) + taxAmt;
+    const grossTotal = (price * quantity) + taxAmt;
     return grossTotal;
 }
 
@@ -62,20 +62,20 @@ const add_grossTotal = (json) => {
         }, 0);
         x[json_keys.grossTotal] = grossTotal;
     });
-    
+
     return json;
 }
 
 
 const is_date_lies_btw_range = (dob, bill_date) => {
-    dob=bill_date.slice(0, 4) + dob.slice(4, dob.length);
-    
+    dob = bill_date.slice(0, 4) + dob.slice(4, dob.length);
+
     const birthday = new Date(dob).getTime();
     const orderDate = new Date(bill_date).getTime();
-    
-    const days_diff = Math.floor((birthday-orderDate)/(1000 * 3600 * 24));
 
-    return days_diff<=30
+    const days_diff = Math.floor((birthday - orderDate) / (1000 * 3600 * 24));
+
+    return days_diff <= 30
 }
 
 
@@ -91,8 +91,8 @@ const is_bought_for_birthday = (json) => {
 }
 
 
-function get_discount_format(discount){
-    const discount_string = discount.slice(0, discount.length-1); // to remove %
+function get_discount_format(discount) {
+    const discount_string = discount.slice(0, discount.length - 1); // to remove %
     return Number(discount_string);
 }
 
@@ -104,7 +104,7 @@ const calculate_paidAmt = (product, discount) => {
     const price_for_n_items = (price * quantity);
 
     discount = get_discount_format(discount);
-    const discountAmt = (discount/100)*price_for_n_items;
+    const discountAmt = (discount / 100) * price_for_n_items;
 
     const taxAmt = product[json_keys.taxAmt]
 
@@ -114,7 +114,7 @@ const calculate_paidAmt = (product, discount) => {
 
 
 const add_paidAmt = (json) => {
-    for(var i=0; i<json[json_keys.BILLS].length; i++) {
+    for (var i = 0; i < json[json_keys.BILLS].length; i++) {
         const currBill = json[json_keys.BILLS][i];
         const currProd = currBill[json_keys.PRODUCTS]
         currProd.map((x) => {
@@ -129,7 +129,7 @@ const find_age = (dob) => {
     const currDate = Date.now();
     dob = new Date(dob);
     const age = Math.floor((currDate - dob) / (365.25 * 24 * 3600000));
-    
+
     return age;
 }
 
@@ -150,9 +150,9 @@ console.log(json);
 
 const fs = require('fs');
 fs.writeFile('updated_bill.json', JSON.stringify(json), (err) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  console.log('File created successfully');
+    if (err) {
+        console.error(err);
+        return;
+    }
+    console.log('File created successfully');
 });
