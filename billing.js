@@ -35,7 +35,6 @@ function add_ltv(json){
     return json;
 }
 
-
 const add_payableAmt = (json) => {
     const all_bills = json[json_keys.BILLS];
     all_bills.map((x) => {
@@ -141,7 +140,7 @@ const add_age = (json) => {
     return json;
 }
 
-const update_bill_functions = [add_age, add_paidAmt, is_bought_for_birthday, add_grossTotal, add_payableAmt, add_ltv, add_lastBillDate];
+const update_bill_functions = [add_age, add_paidAmt, is_bought_for_birthday, add_payableAmt, add_grossTotal, add_ltv, add_lastBillDate];
 
 
 var json = require('./bill.json')
