@@ -35,12 +35,16 @@ function add_ltv(json) {
     return json;
 }
 
+const calculate_payableAmt = (x) => {
+    const currProd = x[json_keys.PRODUCTS];
+    const payableAmt = currProd.reduce((acc, ele) => acc + ele[json_keys.paidAmt], 0);
+    return payableAmt;
+}
+
 const add_payableAmt = (json) => {
     const all_bills = json[json_keys.BILLS];
     all_bills.map((x) => {
-        const currProd = x[json_keys.PRODUCTS];
-        const payableAmt = currProd.reduce((acc, ele) => acc + ele[json_keys.paidAmt], 0);
-        x[json_keys.payableAmt] = payableAmt;
+        x[json_keys.payableAmt] = calculate_payableAmt(x);
     })
     return json;
 }
@@ -67,9 +71,9 @@ const add_grossTotal = (json) => {
 }
 
 
-const is_date_lies_btw_range = (dob, bill_date) => {
+const is_date_lies_btw_range = (dob, bill) => {
+    const bill_date = bill[json_keys.DATE]
     dob = bill_date.slice(0, 4) + dob.slice(4, dob.length);
-
     const birthday = new Date(dob).getTime();
     const orderDate = new Date(bill_date).getTime();
 
@@ -83,7 +87,7 @@ const is_bought_for_birthday = (json) => {
     const all_bills = json[json_keys.BILLS];
     const dob = json[json_keys.DOB];
     all_bills.map((x) => {
-        ordered_for_bday = is_date_lies_btw_range(dob, x[json_keys.DATE], json_keys.bfb_range)
+        ordered_for_bday = is_date_lies_btw_range(dob, x)
         x[json_keys.boughtForBirthday] = ordered_for_bday;
     })
 
